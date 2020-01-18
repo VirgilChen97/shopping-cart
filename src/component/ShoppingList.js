@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-import ButtonBase from '@material-ui/core/ButtonBase'
 import Button from '@material-ui/core/Button'
 
 const useStyles = makeStyles(theme => ({
@@ -17,50 +16,50 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1
   },
   grid:{
-    width: 350
-  },
-  image: {
-    width: 80,
-    height: 120,
+    minWidth: 350
   },
   img: {
-    margin: 'auto',
-    display: 'block',
-    maxWidth: '100%',
-    maxHeight: '100%',
+    margin: '10px',
+    width: 60,
+    height: 90
   }
 }));
 
 const ShoppingList = ({ cart, setCart }) => {
+  const [state, setState] = useState(true);
   const classes = useStyles();
+
+  const removeItem = (key) =>{
+    delete cart[key]
+    setCart(cart)
+    if(state){
+      setState(false)
+    }else{
+      setState(true)
+    }
+  }
 
   const ShoppingListItem = (product) => {
     return (
       <div>
-        <Grid className={classes.grid} container spacing={2}>
-          <Grid item xs={4}>
-            <ButtonBase className={classes.image}>
-              <img className={classes.img} alt="complex" src={'/products/' + product.key.replace(/[^0-9]/ig, "") + '_1.jpg'} />
-            </ButtonBase>
+        <Grid className={classes.grid} container spacing={1}>
+          <Grid item xs={3}>
+            <img className={classes.img} src={'/products/' + product.key.replace(/[^0-9]/ig, "") + '_1.jpg'} />
           </Grid>
-          <Grid item xs={8} sm container>
-            <Grid item xs container direction="column" spacing={2}>
+          <Grid item xs={9} sm container>
+            <Grid item xs container direction="column" spacing={1}>
               <Grid item xs>
                 <Typography gutterBottom variant="subtitle1">
                   {product.title}
                 </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Size: {product.size} x {product.amount}
-                </Typography>
+              </Grid>
+              <Grid item xs container>
+                <Grid item xs={4}><Typography gutterBottom> Size: {product.size} x {product.amount} </Typography></Grid>
+                <Grid item xs={8}><Typography align='right' variant="subtitle1">{product.price} {product.currencyFormat}</Typography></Grid>
               </Grid>
               <Grid item xs>
-                <Typography variant="body2">
-                  <Button>Remove</Button>
-                </Typography>
+                <Button size="small" variant="outlined" color="secondary" onClick={()=>{removeItem(product.key)}}>Remove</Button>
               </Grid>
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle1">{product.price} {product.currencyFormat}</Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -69,8 +68,14 @@ const ShoppingList = ({ cart, setCart }) => {
   }
 
   console.log(cart)
-  if (Object.keys(cart) === 0) {
-    return <p>You have no items</p>
+  if (Object.keys(cart) == 0) {
+    return (
+      <div>
+        <Typography className={classes.title} variant='h5'>Shopping Cart</Typography>
+        <Divider />
+        <Typography className={classes.title}>You have no items in your shopping cart</Typography>
+      </div>
+    )
   } else {
     return (
       <div>
