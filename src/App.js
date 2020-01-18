@@ -20,7 +20,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await fetch('./data/products.json');
+      const response = await fetch('/data/products.json');
       const json = await response.json();
       setData(json);
     };

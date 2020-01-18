@@ -67,10 +67,13 @@ const ItemCard = ({ cart, setCart, product }) => {
 			</CardContent>
 			<Divider variant="middle" />
 			<CardActions>
-				<Chip onClick={() => { setSize('s') }} className={classes.chip} color={isActivate(size, 's')} label="S" />
-				<Chip onClick={() => { setSize('m') }} className={classes.chip} color={isActivate(size, 'm')} label="M" />
-				<Chip onClick={() => { setSize('l') }} className={classes.chip} color={isActivate(size, 'l')} label="L" />
-				<Chip onClick={() => { setSize('xl') }} className={classes.chip} color={isActivate(size, 'xl')} label="XL" />
+				{['s','m','l','xl'].map(choose => {
+					console.log(product)
+					if(product[choose] > 0){
+						return <Chip onClick={() => { setSize(choose) }} className={classes.chip} color={isActivate(size, choose)} label={choose.toUpperCase()} />
+					}
+				})
+				}
 				<Button color="primary" onClick={()=>{addItems()}}>Add to cart</Button>
 			</CardActions>
 		</Card>
