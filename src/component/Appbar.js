@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import { Button, IconButton, makeStyles } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -54,7 +54,7 @@ const ElevateAppBar = (props) => {
 				<AppBar>
 					<Toolbar>
 						<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-							<MenuIcon />
+							<ShoppingCartIcon />
 						</IconButton>
 						<Typography variant="h6" className={classes.title}>
 							News

@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import ElevateAppBar from './component/Appbar';
+import ItemList from './component/ItemList';
+import { Container } from '@material-ui/core';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAaQEsSSJB-hvoosukQW4ILJD25FFFQmBU",
@@ -13,11 +16,9 @@ const firebaseConfig = {
 
 const App = () => {
   const [data, setData] = useState({});
-  const products = Object.values(data);
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await fetch('./data/products.json');
-      console.log(response)
       const json = await response.json();
       setData(json);
     };
@@ -25,9 +26,10 @@ const App = () => {
   }, []);
 
   return (
-    <ul>
-      {products.map(product => <li key={product.sku}>{product.title}</li>)}
-    </ul>
+    <Container>
+      <ElevateAppBar />
+      <ItemList items={data} />
+    </Container>
   );
 };
 
