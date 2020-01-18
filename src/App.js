@@ -3,7 +3,7 @@ import ElevateAppBar from './component/Appbar';
 import ItemList from './component/ItemList';
 import { Container } from '@material-ui/core';
 
-const firebaseConfig = {
+/*const firebaseConfig = {
   apiKey: "AIzaSyAaQEsSSJB-hvoosukQW4ILJD25FFFQmBU",
   authDomain: "learn-react-e62f8.firebaseapp.com",
   databaseURL: "https://learn-react-e62f8.firebaseio.com",
@@ -12,10 +12,12 @@ const firebaseConfig = {
   messagingSenderId: "523538593380",
   appId: "1:523538593380:web:5831ecab8ba93436449171",
   measurementId: "G-49VNZ2GPXJ"
-};
+};*/
 
 const App = () => {
   const [data, setData] = useState({});
+  const [cart, setCart] = useState({})
+
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await fetch('./data/products.json');
@@ -27,8 +29,8 @@ const App = () => {
 
   return (
     <Container>
-      <ElevateAppBar />
-      <ItemList items={data} />
+      <ElevateAppBar cart={cart} setCart={setCart} items={data}/>
+      <ItemList cart={cart} setCart={setCart} items={data} />
     </Container>
   );
 };

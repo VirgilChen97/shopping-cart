@@ -38,15 +38,15 @@ ElevationScroll.propTypes = {
 	window: PropTypes.func,
 };
 
-const ElevateAppBar = (props) => {
+const ElevateAppBar = ({cart, setCart}) => {
 	const classes = useStyles();
 	return (
 		<React.Fragment>
 			<CssBaseline />
-			<ElevationScroll {...props}>
+			<ElevationScroll>
 				<AppBar>
 					<Toolbar>
-						<ShoppingCart />
+						<ShoppingCart cart={cart} setCart={setCart}/>
 						<Typography variant="h6" className={classes.title}>
 							Shopping
     					</Typography>

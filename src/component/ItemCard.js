@@ -20,10 +20,27 @@ const isActivate = (size, nowSize) => {
 	else return 'default'
 }
 
-const ItemCard = ({ product }) => {
+const ItemCard = ({ cart, setCart, product }) => {
 	const [size, setSize] = useState('s');
 	const classes = useStyles();
 	const imgurl="/products/" + product.sku +"_1.jpg"
+
+	const addItems = () => {
+		let prevCart = {...cart}
+		if(!prevCart[product.sku+size]){
+			prevCart[product.sku+size] = {
+				key: product.sku+size,
+				title:product.title,
+				price:product.price,
+				currencyFormat:product.currencyFormat,
+				size:size,
+				amount:0
+			}
+		}
+		prevCart[product.sku+size]['amount']++
+		setCart(prevCart)
+	}
+
 	return (
 		<Card>
 			<CardMedia
@@ -54,7 +71,7 @@ const ItemCard = ({ product }) => {
 				<Chip onClick={() => { setSize('m') }} className={classes.chip} color={isActivate(size, 'm')} label="M" />
 				<Chip onClick={() => { setSize('l') }} className={classes.chip} color={isActivate(size, 'l')} label="L" />
 				<Chip onClick={() => { setSize('xl') }} className={classes.chip} color={isActivate(size, 'xl')} label="XL" />
-				<Button color="primary">Add to cart</Button>
+				<Button color="primary" onClick={()=>{addItems()}}>Add to cart</Button>
 			</CardActions>
 		</Card>
 	);

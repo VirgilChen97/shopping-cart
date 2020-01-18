@@ -9,14 +9,14 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 
-const ItemList = ({items}) => {
+const ItemList = ({cart, setCart, items}) => {
 	items = Object.values(items);
 	const classes = useStyles();
 	if (items.length > 0) {
 		return (
 			<div className={classes.root}>
 				<Grid container spacing={3}>
-					{items.map(product => <Grid key={product.sku} item xs={12}><ItemCard product={product} /></Grid>)}
+					{items.map(product => <Grid key={product.sku} item xs={12}><ItemCard cart={cart} setCart={setCart} product={product} /></Grid>)}
 				</Grid>
 			</div >
 		);
