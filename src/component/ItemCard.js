@@ -4,7 +4,7 @@ import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
-import { Card, CardContent, CardActions, CardMedia, Button, ButtonGroup } from '@material-ui/core';
+import { Card, CardContent, CardActions, CardMedia, Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 	media: {
