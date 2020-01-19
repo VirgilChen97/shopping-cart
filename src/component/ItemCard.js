@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import { Card, CardContent, CardActions, CardMedia, Button } from '@material-ui/core';
+import firebase from 'firebase/app'
 
 const useStyles = makeStyles(theme => ({
 	media: {
@@ -23,22 +24,29 @@ const isActivate = (size, nowSize) => {
 const ItemCard = ({ cart, setCart, product }) => {
 	const [size, setSize] = useState('s');
 	const classes = useStyles();
-	const imgurl="/products/" + product.sku +"_1.jpg"
+	const imgurl = "/products/" + product.sku + "_1.jpg"
 
 	const addItems = () => {
-		let prevCart = {...cart}
-		if(!prevCart[product.sku+size]){
-			prevCart[product.sku+size] = {
-				key: product.sku+size,
-				title:product.title,
-				price:product.price,
-				currencyFormat:product.currencyFormat,
-				size:size,
-				amount:0
+		if (!cart[product.sku + size]) {
+			cart[product.sku + size] = {
+				key: product.sku + size,
+				title: product.title,
+				price: product.price,
+				currencyFormat: product.currencyFormat,
+				size: size,
+				amount: 0
 			}
 		}
-		prevCart[product.sku+size]['amount']++
-		setCart(prevCart)
+		cart[product.sku + size]['amount']++
+		if (firebase.auth().currentUser) {
+			firebase
+				.database()
+				.ref("users")
+				.update({
+					[firebase.auth().currentUser.uid]: cart
+				});
+		}
+		setCart(cart)
 	}
 
 	return (
@@ -56,9 +64,9 @@ const ItemCard = ({ cart, setCart, product }) => {
 						</Typography>
 					</Grid>
 					<Grid item xs={4}>
-							<Typography align='right' gutterBottom variant="h6">
-								{product.price} {product.currencyFormat}
-							</Typography>
+						<Typography align='right' gutterBottom variant="h6">
+							{product.price} {product.currencyFormat}
+						</Typography>
 					</Grid>
 				</Grid>
 				<Typography color="textSecondary" variant="body2">
@@ -67,14 +75,21 @@ const ItemCard = ({ cart, setCart, product }) => {
 			</CardContent>
 			<Divider variant="middle" />
 			<CardActions>
-				{['s','m','l','xl'].map(choose => {
-					console.log(product)
-					if(product[choose] > 0){
-						return <Chip onClick={() => { setSize(choose) }} className={classes.chip} color={isActivate(size, choose)} label={choose.toUpperCase()} />
+				{['s', 'm', 'l', 'xl'].map(choose => {
+					if (product[choose] > 0) {
+						return (
+							<Chip
+								key={product['sku'] + choose}
+								onClick={() => { setSize(choose) }}
+								className={classes.chip}
+								color={isActivate(size, choose)}
+								label={choose.toUpperCase()}
+							/>
+						)
 					}
 				})
 				}
-				<Button color="primary" onClick={()=>{addItems()}}>Add to cart</Button>
+				<Button color="primary" onClick={() => { addItems() }}>Add to cart</Button>
 			</CardActions>
 		</Card>
 	);

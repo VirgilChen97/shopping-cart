@@ -21,12 +21,16 @@ const App = () => {
   const [data, setData] = useState({});
   const [cart, setCart] = useState({})
   const db = firebase.database().ref();
+  const [user, setUser] = useState(null);
+
+	useEffect(() => {
+    firebase.auth().onAuthStateChanged(setUser)
+	}, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
       const productDb = db.child('products');
       productDb.once('value').then(snapshot => {
-        console.log("The database returns: " + snapshot)
         if (snapshot.val()) {
           setData(snapshot.val())
         }

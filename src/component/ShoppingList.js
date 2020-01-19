@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -6,6 +6,7 @@ import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
+import firebase from 'firebase/app'
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     flexGrow: 1
   },
-  grid:{
+  grid: {
     minWidth: 350
   },
   img: {
@@ -29,12 +30,35 @@ const ShoppingList = ({ cart, setCart }) => {
   const [state, setState] = useState(true);
   const classes = useStyles();
 
-  const removeItem = (key) =>{
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (firebase.auth().currentUser) {
+        const userCartDb = firebase.database().ref('users/' + firebase.auth().currentUser.uid);
+        userCartDb.once('value').then(snapshot => {
+          console.log(snapshot)
+          if (snapshot.val()) {
+            setCart(snapshot.val())
+          }
+        })
+      }
+    };
+    fetchCart();
+  }, []);
+
+  const removeItem = (key) => {
     delete cart[key]
+    if (firebase.auth().currentUser) {
+      firebase
+        .database()
+        .ref("users")
+        .update({
+          [firebase.auth().currentUser.uid]: cart
+        });
+    }
     setCart(cart)
-    if(state){
+    if (state) {
       setState(false)
-    }else{
+    } else {
       setState(true)
     }
   }
@@ -58,7 +82,7 @@ const ShoppingList = ({ cart, setCart }) => {
                 <Grid item xs={8}><Typography align='right' variant="subtitle1">{product.price} {product.currencyFormat}</Typography></Grid>
               </Grid>
               <Grid item xs>
-                <Button size="small" variant="outlined" color="secondary" onClick={()=>{removeItem(product.key)}}>Remove</Button>
+                <Button size="small" variant="outlined" color="secondary" onClick={() => { removeItem(product.key) }}>Remove</Button>
               </Grid>
             </Grid>
           </Grid>
@@ -67,7 +91,6 @@ const ShoppingList = ({ cart, setCart }) => {
     );
   }
 
-  console.log(cart)
   if (Object.keys(cart) == 0) {
     return (
       <div>

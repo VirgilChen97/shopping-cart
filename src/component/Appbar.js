@@ -5,8 +5,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import { Button, makeStyles } from '@material-ui/core';
+import { makeStyles, Avatar } from '@material-ui/core';
 import ShoppingCart from './Cart'
+import SignIn from './login';
+import SimplePopover from './logout'
+import firebase from 'firebase/app'
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -50,7 +53,7 @@ const ElevateAppBar = ({cart, setCart}) => {
 						<Typography variant="h6" className={classes.title}>
 							Shopping
     					</Typography>
-						<Button color="inherit">Login</Button>
+						{firebase.auth().currentUser ? <SimplePopover><Avatar src={firebase.auth().currentUser.photoURL} /></SimplePopover>: <SignIn />}
 					</Toolbar>
 				</AppBar>
 			</ElevationScroll>
