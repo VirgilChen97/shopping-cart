@@ -22,7 +22,6 @@ const isActivate = (size, nowSize) => {
 }
 
 const isSoldOut = product => {
-	console.log(product)
 	if (product['s'] === 0 && product['m'] === 0 && product['l'] === 0 && product['xl'] === 0) {
 		return true
 	} else {
@@ -36,6 +35,10 @@ const ItemCard = ({ cart, setCart, product }) => {
 	const imgurl = "/products/" + product.sku + "_1.jpg"
 
 	const addItems = () => {
+		if(!firebase.auth().currentUser){
+			alert('You need to sign in to add items to the shopping cart')
+			return
+		}
 		if (!cart[product.sku + size]) {
 			cart[product.sku + size] = {
 				key: product.sku + size,
