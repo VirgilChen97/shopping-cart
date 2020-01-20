@@ -21,6 +21,15 @@ const isActivate = (size, nowSize) => {
 	else return 'default'
 }
 
+const isSoldOut = product => {
+	console.log(product)
+	if (product['s'] === 0 && product['m'] === 0 && product['l'] === 0 && product['xl'] === 0) {
+		return true
+	} else {
+		return false
+	}
+}
+
 const ItemCard = ({ cart, setCart, product }) => {
 	const [size, setSize] = useState('s');
 	const classes = useStyles();
@@ -37,16 +46,21 @@ const ItemCard = ({ cart, setCart, product }) => {
 				amount: 0
 			}
 		}
-		cart[product.sku + size]['amount']++
-		if (firebase.auth().currentUser) {
-			firebase
-				.database()
-				.ref("users")
-				.update({
-					[firebase.auth().currentUser.uid]: cart
-				});
+		if (cart[product.sku + size]['amount'] >= product[size]) {
+			alert("You have purchased all the inventory " + product[size])
+		} else {
+			cart[product.sku + size]['amount']++
+			if (firebase.auth().currentUser) {
+				firebase
+					.database()
+					.ref("users")
+					.update({
+						[firebase.auth().currentUser.uid]: cart
+					});
+			}
+			alert("Success")
+			setCart(cart)
 		}
-		setCart(cart)
 	}
 
 	return (
@@ -89,7 +103,10 @@ const ItemCard = ({ cart, setCart, product }) => {
 					}
 				})
 				}
-				<Button color="primary" onClick={() => { addItems() }}>Add to cart</Button>
+				{!isSoldOut(product) ?
+					<Button color="primary" onClick={() => { addItems() }}>Add to cart</Button>
+					: <Button disabled color="primary">Sold Out</Button>
+				}
 			</CardActions>
 		</Card>
 	);

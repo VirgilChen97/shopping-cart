@@ -26,6 +26,37 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const totalAmount = cart => {
+  let total = 0
+  Object.values(cart).map(product => { total += product.price * product.amount })
+  return total
+}
+
+const checkOut = (cart, setCart) => {
+  let total = totalAmount(cart)
+  Object.values(cart).map(product => {
+    firebase
+      .database()
+      .ref("products/" + product.key.replace(/[^0-9]/ig, "") + "/" + product.size)
+      .once('value', snapshot => {
+        let inventory = snapshot.val()
+        if (product.amount > inventory) {
+          alert('There are only' + inventory + ' ' + product.title)
+        }
+        firebase
+          .database()
+          .ref("products/" + product.key.replace(/[^0-9]/ig, ""))
+          .update({ [product.size]: Math.max(inventory - product.amount, 0) })
+      })
+  })
+  firebase
+    .database()
+    .ref("users/"+firebase.auth().currentUser.uid)
+    .remove()
+  setCart({})
+  alert("You have successfully checked out, you paid "+total+" $")
+}
+
 const ShoppingList = ({ cart, setCart }) => {
   const [state, setState] = useState(true);
   const classes = useStyles();
@@ -35,7 +66,6 @@ const ShoppingList = ({ cart, setCart }) => {
       if (firebase.auth().currentUser) {
         const userCartDb = firebase.database().ref('users/' + firebase.auth().currentUser.uid);
         userCartDb.once('value').then(snapshot => {
-          console.log(snapshot)
           if (snapshot.val()) {
             setCart(snapshot.val())
           }
@@ -107,6 +137,8 @@ const ShoppingList = ({ cart, setCart }) => {
         <List component="nav" className={classes.root} aria-label="mailbox folders">
           {Object.values(cart).map(product => <div key={product.key}><ListItem>{ShoppingListItem(product)}</ListItem><Divider /></div>)}
         </List>
+        <Typography className={classes.title} >Total: {totalAmount(cart).toFixed(2)} $</Typography>
+        <Button onClick={() => { checkOut(cart, setCart) }}>Check Out</Button>
       </div>
     );
   }
